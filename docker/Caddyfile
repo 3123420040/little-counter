@@ -1,0 +1,82 @@
+{$CADDY_SITE_ADDRESS::80} {
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+	@partner_private path /mcp /mcp/* /api/mcp /api/mcp/* /partner/* /api/partner/*
+	handle @partner_private {
+		respond 404
+	}
+
+	handle /api/admin/* {
+		uri strip_prefix /api
+		uri replace /admin/ /platform/admin/
+		reverse_proxy medusa:9000
+	}
+
+	handle_path /api/* {
+		reverse_proxy medusa:9000
+	}
+
+	handle /ai/health {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/reply-draft {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/order-draft {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/vision/* {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/telegram-sales/* {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/product-research* {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/review-queue {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/actions/* {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/alerts* {
+		reverse_proxy ai:3002
+	}
+
+	handle /ai/recommendations/* {
+		reverse_proxy ai:3002
+	}
+
+	handle /webhooks/* {
+		reverse_proxy medusa:9000
+	}
+
+	handle /admin/* {
+		reverse_proxy medusa:9000
+	}
+
+	handle /pricing {
+		rewrite * /
+		reverse_proxy pricing:8080
+	}
+
+	handle_path /pricing/* {
+		reverse_proxy pricing:8080
+	}
+
+	handle {
+		reverse_proxy pos:8080
+	}
+}

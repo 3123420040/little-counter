@@ -1,0 +1,222 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "medusa-snus API",
+    "version": "1.0.0",
+    "description": "Retail POS system for snus/nicotine pouch store in Vietnam. AI-powered reply drafts, inventory alerts, double-entry accounting, loyalty program."
+  },
+  "servers": [
+    { "url": "http://localhost:3002", "description": "Local AI Module" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
+  "tags": [
+    { "name": "POS", "description": "Point of Sale — login, products, checkout" },
+    { "name": "Orders", "description": "Order history & management" },
+    { "name": "Inventory", "description": "Stock levels, alerts, adjustments" },
+    { "name": "Dashboard", "description": "Business metrics" },
+    { "name": "Audit", "description": "Audit log" },
+    { "name": "AI", "description": "AI reply drafts, review queue, alerts" },
+    { "name": "Health", "description": "Service health check" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "security": [],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "object", "properties": { "status": { "type": "string" }, "service": { "type": "string" } } } } } }
+        }
+      }
+    },
+    "/api/pos/login": {
+      "post": {
+        "tags": ["POS"],
+        "summary": "Staff login",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["operatorId", "password"], "properties": { "operatorId": { "type": "string", "example": "op_owner" }, "password": { "type": "string", "format": "password", "writeOnly": true } } } } }
+        },
+        "responses": {
+          "200": { "description": "JWT token + operator info" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/pos/products": {
+      "get": {
+        "tags": ["POS"],
+        "summary": "List products for POS grid",
+        "parameters": [{ "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Search query" }],
+        "responses": {
+          "200": { "description": "Product list with variants, prices, stock" }
+        }
+      }
+    },
+    "/api/pos/carts/complete": {
+      "post": {
+        "tags": ["POS"],
+        "summary": "Complete a sale",
+        "description": "Creates order, deducts inventory, records loyalty points, generates accounting entries",
+        "parameters": [{ "name": "Idempotency-Key", "in": "header", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["items", "paymentMethod", "amountReceived"], "properties": {
+            "items": { "type": "array", "items": { "type": "object", "properties": { "variantId": { "type": "string" }, "quantity": { "type": "integer" } } } },
+            "customerId": { "type": "string" },
+            "paymentMethod": { "type": "string", "enum": ["cash", "bank_transfer", "cod"] },
+            "amountReceived": { "type": "number" },
+            "discountPercent": { "type": "number" }
+          } } } }
+        },
+        "responses": {
+          "201": { "description": "Order created with receipt data" },
+          "409": { "description": "Insufficient stock" }
+        }
+      }
+    },
+    "/api/admin/inventory-items": {
+      "get": {
+        "tags": ["Inventory"],
+        "summary": "List inventory items with stock levels",
+        "parameters": [{ "name": "limit", "in": "query", "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Inventory items array" } }
+      }
+    },
+    "/api/admin/orders": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "List all orders",
+        "parameters": [
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "customer_id", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Orders array with items, status, totals" } }
+      }
+    },
+    "/api/admin/orders/{id}": {
+      "get": {
+        "tags": ["Orders"],
+        "summary": "Get order detail",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Order detail" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/api/orders/{id}/cancel": {
+      "post": {
+        "tags": ["Orders"],
+        "summary": "Cancel an order",
+        "description": "Restores inventory, reverses loyalty points, creates accounting reversal",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "reason": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Order cancelled" }, "409": { "description": "Already cancelled" } }
+      }
+    },
+    "/api/admin/dashboard": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get dashboard metrics",
+        "parameters": [{ "name": "date", "in": "query", "schema": { "type": "string" }, "description": "Date filter (YYYY-MM-DD)" }],
+        "responses": { "200": { "description": "Dashboard data" } }
+      }
+    },
+    "/api/audit": {
+      "get": {
+        "tags": ["Audit"],
+        "summary": "Get audit log",
+        "responses": { "200": { "description": "Audit entries array" } }
+      }
+    },
+    "/ai/reply-draft": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Generate AI reply draft",
+        "description": "Creates a draft reply using rule-based AI. Policy engine filters blocked claims (health, medical, cessation).",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["customerMessage"], "properties": {
+            "customerMessage": { "type": "string", "example": "Còn Mint Medium không? Giá bao nhiêu?" },
+            "productContext": { "type": "array", "items": { "type": "string" }, "example": ["prod_mint"] },
+            "operatorInstruction": { "type": "string" }
+          } } } }
+        },
+        "responses": {
+          "202": { "description": "Draft generated, requires review" },
+          "400": { "description": "Validation error (empty message)" }
+        }
+      }
+    },
+    "/ai/review-queue": {
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get pending AI actions for review",
+        "responses": { "200": { "description": "Array of pending AI actions" } }
+      }
+    },
+    "/ai/vision/product-search": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Run vision product search for POS input",
+        "description": "Accepts a staff-authenticated product image and returns provider candidates mapped to local variant IDs. Raw OCR text and raw image bytes are not returned.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "required": ["imageBase64"], "properties": {
+            "imageBase64": { "type": "string", "description": "JPEG, PNG, or WebP data URL/base64 payload within the configured byte limit." }
+          } } } }
+        },
+        "responses": {
+          "200": { "description": "Vision candidates returned" },
+          "400": { "description": "Invalid image payload" },
+          "403": { "description": "Missing vision scan permission" }
+        }
+      }
+    },
+    "/ai/actions/{id}/approve": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Approve an AI draft",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "approvedText": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Action approved" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/ai/actions/{id}/reject": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Reject an AI draft",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "reason": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "Action rejected" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/ai/alerts": {
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get inventory alerts",
+        "responses": { "200": { "description": "Array of inventory alerts" } }
+      }
+    },
+    "/ai/alerts/{id}/acknowledge": {
+      "post": {
+        "tags": ["AI"],
+        "summary": "Acknowledge an alert",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Alert acknowledged" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/ai/recommendations/{customerId}": {
+      "get": {
+        "tags": ["AI"],
+        "summary": "Get loyalty recommendations for a customer",
+        "parameters": [{ "name": "customerId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Recommendations array" } }
+      }
+    }
+  }
+}

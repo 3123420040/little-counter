@@ -1,0 +1,115 @@
+{
+	admin off
+	auto_https off
+	servers {
+		max_header_size 16KB
+		timeouts {
+			read_header 3s
+			read_body 7s
+			write 10s
+			idle 30s
+		}
+	}
+}
+(partner_upstream) {
+	reverse_proxy partner-api-a:9000 partner-api-b:9000 {
+		lb_policy round_robin
+		lb_retries 0
+		header_up -Baggage
+		header_up -X-Forwarded-Host
+		# The edge proxy supplies its real socket peer after authenticating to this ingress.
+		header_up X-Partner-Client-Ip {http.request.header.X-Forwarded-For}
+		header_up -X-Snus-Hermes-Proof
+		header_down -Cache-Control
+		header_down -X-Content-Type-Options
+		transport http {
+			dial_timeout 1s
+			keepalive 2s
+			response_header_timeout 7s
+			max_conns_per_host 20
+		}
+	}
+}
+:8082 {
+	header Cache-Control no-store
+	header X-Content-Type-Options nosniff
+	header -Server
+	request_body {
+		max_size 64KB
+	}
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request delete
+				resp_headers delete
+			}
+		}
+	}
+	route {
+		# Authenticate the edge proxy before trusting forwarded network identity.
+		@untrusted not header X-Snus-Hermes-Proof {$PARTNER_HERMES_SHARED_SECRET}
+		respond @untrusted 403
+		@partner host {$PARTNER_PUBLIC_HOST}
+		handle @partner {
+			@mcp path /mcp
+			handle @mcp {
+				import partner_upstream
+			}
+			@read {
+				method GET
+				path /partner/v1/me /partner/v1/products /partner/v1/inventory /partner/v1/catalog-summary /partner/v1/orders
+			}
+			handle @read {
+				import partner_upstream
+			}
+			@detail {
+				method GET
+				path_regexp detail ^/partner/v1/orders/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$
+			}
+			handle @detail {
+				import partner_upstream
+			}
+			# Exact commerce routes; runtime profile, tenant grant and key/token scopes
+			# independently gate mutations. Read-only profiles keep writes disabled.
+			@write {
+				method POST
+				path /partner/v1/quotes /partner/v1/orders
+			}
+			handle @write {
+				import partner_upstream
+			}
+			handle {
+				respond 404
+			}
+		}
+		@as host {$PARTNER_AS_HOST}
+		handle @as {
+			@token {
+				method POST
+				path /realms/snus-partner-production/protocol/openid-connect/token
+			}
+			handle @token {
+				reverse_proxy https://{$PARTNER_AS_HOST} {
+					header_up -X-Snus-Hermes-Proof
+				}
+			}
+			@metadata {
+				method GET
+				path /realms/snus-partner-production/.well-known/openid-configuration /realms/snus-partner-production/protocol/openid-connect/certs
+			}
+			handle @metadata {
+				reverse_proxy https://{$PARTNER_AS_HOST} {
+					header_up -X-Snus-Hermes-Proof
+				}
+			}
+			handle {
+				respond 404
+			}
+		}
+		handle {
+			respond 404
+		}
+	}
+}

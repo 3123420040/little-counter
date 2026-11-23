@@ -1,0 +1,3 @@
+# Frozen scoped catalog release
+1|062_catalog_merchant_ownership.sql|963effd4f586da42c12c0ca76cb7d038d256fbb1f9511d962efc6a1591c8ee32|required
+2|063_catalog_scoped_codes.sql|bffee136cdc84c13e20d88b42cc3ffce70ec796fc37fc534232ad92588d1732c|required

@@ -1,0 +1,4 @@
+# Dashboard self-read and opt-in MCP merchant-published catalog mode
+1|064_dashboard_self_read_permission.sql|38e2758f2dfd443877f8256461a38659fd604491f15a4f4e8e98279c8704a348|required
+2|065_partner_mcp_catalog_mode.sql|aaa9d5d0b57d3f62812ae45027d6e161012c9d4af42a80a0ba9344915e29368b|required
+3|066_order_creator_provenance_index.sql|b037ee755448e16d508180424e8ddfd34078a6e2dade684a186b2cc50bdf2c73|required

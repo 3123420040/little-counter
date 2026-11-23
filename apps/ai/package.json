@@ -1,0 +1,25 @@
+{
+  "name": "@medusa-snus/ai",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node --import tsx dist/index.js"
+  },
+  "dependencies": {
+    "@medusa-snus/contracts": "*",
+    "@medusa-snus/domain": "*",
+    "@medusa-snus/application": "*",
+    "fastify": "5.12.2",
+    "pg": "^8.16.3",
+    "tsx": "^4.20.6",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,2212 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Snus Ops Partner Business API",
+    "version": "1.0.0-draft",
+    "summary": "Partner catalog, stock availability, quotes and orders",
+    "description": "Example hostnames are placeholders. The API supports server-to-server partner catalog, availability, quote and confirmed COD booking. No reservation/payment/cancel/refund/webhook operations in this version. Server-to-server client authentication is configured at the authorization server; private_key_jwt preferred, client_secret_basic compatibility profile only."
+  },
+  "servers": [
+    {
+      "url": "https://partners.example.com/partner/v1",
+      "description": "Example production endpoint"
+    },
+    {
+      "url": "https://partners-sandbox.example.com/partner/v1",
+      "description": "Sandbox placeholder; credentials, issuer/audience and data are isolated"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Partner API",
+      "description": "All resources are constrained by verified integration and store grants."
+    }
+  ],
+  "security": [
+    {
+      "PartnerOAuth": []
+    }
+  ],
+  "paths": {
+    "/me": {
+      "get": {
+        "operationId": "getPartnerMe",
+        "summary": "Read own identity, active store grants and quotas",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "partner:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "operationId": "listPartnerProducts",
+        "summary": "List active products in the permitted assortment",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "catalog:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          },
+          {
+            "$ref": "#/components/parameters/StoreId"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/inventory": {
+      "get": {
+        "operationId": "listPartnerInventory",
+        "summary": "Read availability from primary inventory at the permitted store",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "inventory:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          },
+          {
+            "$ref": "#/components/parameters/StoreId"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "variant_ids",
+            "in": "query",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Identifier"
+              },
+              "minItems": 1,
+              "maxItems": 50,
+              "uniqueItems": true
+            },
+            "description": "Comma-separated variant IDs; missing or outside assortment are omitted without disclosing why."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryResponse"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "variant_id": "variant_example",
+                      "store_id": "store_example",
+                      "availability_status": "available",
+                      "available_quantity": 12,
+                      "as_of": "2026-09-11T08:10:00Z"
+                    }
+                  ],
+                  "page": {
+                    "next_cursor": null,
+                    "as_of": "2026-09-11T08:10:00Z"
+                  },
+                  "meta": {
+                    "request_id": "req_example_inventory"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        }
+      }
+    },
+    "/catalog-summary": {
+      "get": {
+        "operationId": "getPartnerCatalogSummary",
+        "summary": "Read one scoped catalog and inventory summary",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "catalog:read",
+              "inventory:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          },
+          {
+            "$ref": "#/components/parameters/StoreId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogSummaryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "One repeatable-read snapshot of eligible published variants for the selected store grant. The effective catalog mode is credential-specific; quantity totals are per variant and are null when inventory is incomplete."
+      }
+    },
+    "/quotes": {
+      "post": {
+        "operationId": "createPartnerQuote",
+        "summary": "Create a five-minute quote without holding inventory",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "orders:quote"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Quote created; no stock reservation",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteResponse"
+                },
+                "example": {
+                  "data": {
+                    "quote_id": "pq_example",
+                    "store_id": "store_example",
+                    "currency": "VND",
+                    "items": [
+                      {
+                        "variant_id": "variant_example",
+                        "quantity": 2,
+                        "unit_price": 120000,
+                        "line_total": 240000
+                      }
+                    ],
+                    "subtotal": 240000,
+                    "shipping_fee": 0,
+                    "total": 240000,
+                    "fulfillment_mode": "pickup",
+                    "pricing_version": "price_example_1",
+                    "policy_version": 1,
+                    "expires_at": "2026-09-11T08:15:00Z",
+                    "stock_reserved": false
+                  },
+                  "meta": {
+                    "request_id": "req_example_quote"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteRequest"
+              },
+              "example": {
+                "store_id": "store_example",
+                "items": [
+                  {
+                    "variant_id": "variant_example",
+                    "quantity": 2
+                  }
+                ],
+                "fulfillment_mode": "pickup"
+              }
+            }
+          }
+        },
+        "description": "Server pricing, stock check and policy snapshot. Duplicate variant lines are aggregated; final quantity may not exceed 100 per variant. VND only. Shipping rule must exist; pickup fee is zero. Quote creation may be safely repeated but may produce another quote ID. Requires current merchant partner_api write capability; subscription expired or missing entitlement returns 403 merchant_capability_denied."
+      }
+    },
+    "/orders": {
+      "post": {
+        "operationId": "bookPartnerOrder",
+        "summary": "Atomically confirm a COD order and deduct stock",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "orders:write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Original safe data replayed; use GET for latest state",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              },
+              "Idempotency-Replayed": {
+                "schema": {
+                  "type": "string",
+                  "const": "true"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                },
+                "example": {
+                  "data": {
+                    "order_id": "pord_example",
+                    "external_order_id": "EXT-20260911-0001",
+                    "store_id": "store_example",
+                    "booking_status": "confirmed",
+                    "collection_status": "unconfirmed",
+                    "payment_method": "cod",
+                    "currency": "VND",
+                    "total": 240000,
+                    "stock_deducted": true,
+                    "created_at": "2026-09-11T08:10:22Z",
+                    "updated_at": "2026-09-11T08:10:22Z"
+                  },
+                  "meta": {
+                    "request_id": "req_example_2",
+                    "original_request_id": "req_example_1"
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Committed booking",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              },
+              "Location": {
+                "description": "Relative scoped order URL including store_id query parameter.",
+                "schema": {
+                  "type": "string",
+                  "format": "uri-reference"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                },
+                "example": {
+                  "data": {
+                    "order_id": "pord_example",
+                    "external_order_id": "EXT-20260911-0001",
+                    "store_id": "store_example",
+                    "booking_status": "confirmed",
+                    "collection_status": "unconfirmed",
+                    "payment_method": "cod",
+                    "currency": "VND",
+                    "total": 240000,
+                    "stock_deducted": true,
+                    "created_at": "2026-09-11T08:10:22Z",
+                    "updated_at": "2026-09-11T08:10:22Z"
+                  },
+                  "meta": {
+                    "request_id": "req_example_1"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequest"
+              },
+              "example": {
+                "store_id": "store_example",
+                "quote_id": "pq_example",
+                "external_order_id": "EXT-20260911-0001",
+                "payment_method": "cod",
+                "fulfillment": {
+                  "mode": "pickup"
+                }
+              }
+            }
+          }
+        },
+        "description": "Same integration/store quote and fulfillment mode required. Check current grant and pricing/policy version, quote expiry/consumption, order value cap and stock in one transaction. COD booking does not prove payment receipt or delivery. Auth precedes replay; successful replay precedes quote expiry validation. Unique external_order_id across stores of this integration prevents duplicate business orders even with a new idempotency key. No partial order success. All POST attempts, including replay, require current orders:write scope, selected-store grant and merchant write capability. After subscription expiry, use authorized GET order/history to reconcile. HTTP rate quota counts replay attempts; no repeated business effects."
+      },
+      "get": {
+        "operationId": "listPartnerOrders",
+        "summary": "List only orders owned by this integration",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "orders:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          },
+          {
+            "$ref": "#/components/parameters/StoreId"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "external_order_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "Exact lookup ignores default date range; cannot combine with date_from/date_to/cursor."
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Requires date_to; max range 31 days. Defaults to trailing 7 days only when external_order_id is absent."
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Exclusive upper bound; requires date_from."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrdersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Live keyset pages sorted by created_at and order_id. Cross-field query rules are validated at runtime; no full-list snapshot guarantee."
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "operationId": "getPartnerOrder",
+        "summary": "Read current scoped booking and evidence-based collection state",
+        "tags": [
+          "Partner API"
+        ],
+        "security": [
+          {
+            "PartnerOAuth": [
+              "orders:read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Correlation"
+          },
+          {
+            "$ref": "#/components/parameters/StoreId"
+          },
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Unique server-generated identifier for this HTTP attempt.",
+                "schema": {
+                  "$ref": "#/components/schemas/Identifier"
+                }
+              },
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                },
+                "example": {
+                  "data": {
+                    "order_id": "pord_example",
+                    "external_order_id": "EXT-20260911-0001",
+                    "store_id": "store_example",
+                    "booking_status": "confirmed",
+                    "collection_status": "unconfirmed",
+                    "payment_method": "cod",
+                    "currency": "VND",
+                    "total": 240000,
+                    "stock_deducted": true,
+                    "created_at": "2026-09-11T08:10:22Z",
+                    "updated_at": "2026-09-11T08:10:22Z"
+                  },
+                  "meta": {
+                    "request_id": "req_example_get"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error503"
+          }
+        },
+        "description": "Query-only current effective commercial projection. Mapping ownership stays immutable even if staff edits sales channel/customer. Return 503 effective_order_unavailable instead of falling back to original totals."
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "PartnerOAuth": {
+        "type": "oauth2",
+        "description": "Client Credentials at an external AS. URL below is a placeholder; each environment receives its own token URL/audience. No staff JWT or shared Telegram token. Effective scopes are the intersection of access-token scopes and active local grants. Scope enforcement binds permission to the selected store; scopes from different stores must not be unioned. Registry/capability GET readers must not lazy-create business records.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://auth.example.com/oauth2/token",
+            "scopes": {
+              "partner:read": "Read own integration and grants",
+              "catalog:read": "Read permitted catalog",
+              "inventory:read": "Read permitted stock availability",
+              "orders:quote": "Obtain a server-priced quote",
+              "orders:write": "Book confirmed COD orders",
+              "orders:read": "Read orders owned by this integration"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Identifier": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      },
+      "Money": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "NonNegativeSafeInteger": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "original_request_id": {
+            "$ref": "#/components/schemas/Identifier"
+          }
+        },
+        "required": [
+          "request_id"
+        ]
+      },
+      "Page": {
+        "type": "object",
+        "properties": {
+          "next_cursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2048
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "next_cursor",
+          "as_of"
+        ]
+      },
+      "StoreGrant": {
+        "type": "object",
+        "properties": {
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "partner:read",
+                "catalog:read",
+                "inventory:read",
+                "orders:quote",
+                "orders:write",
+                "orders:read"
+              ]
+            }
+          }
+        },
+        "required": [
+          "store_id",
+          "scopes"
+        ]
+      },
+      "Limits": {
+        "type": "object",
+        "properties": {
+          "read_requests_per_minute": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "quote_requests_per_minute": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "book_requests_per_minute": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "max_page_size": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "max_order_lines": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "max_order_total": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "currency": {
+            "const": "VND",
+            "type": "string"
+          }
+        },
+        "required": [
+          "read_requests_per_minute",
+          "quote_requests_per_minute",
+          "book_requests_per_minute",
+          "max_page_size",
+          "max_order_lines",
+          "max_order_total",
+          "currency"
+        ]
+      },
+      "Integration": {
+        "type": "object",
+        "properties": {
+          "partner_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "integration_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "client_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "sandbox",
+              "production"
+            ]
+          },
+          "merchant_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "partner:read",
+                "catalog:read",
+                "inventory:read",
+                "orders:quote",
+                "orders:write",
+                "orders:read"
+              ]
+            }
+          },
+          "stores": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreGrant"
+            }
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          },
+          "writes_enabled": {
+            "type": "boolean",
+            "description": "Requires both local grants and current merchant partner_api write capability; expired subscription disables quote/book."
+          },
+          "writes_denial_code": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 96
+          }
+        },
+        "required": [
+          "partner_id",
+          "integration_id",
+          "client_id",
+          "environment",
+          "merchant_id",
+          "scopes",
+          "stores",
+          "limits",
+          "writes_enabled",
+          "writes_denial_code"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "variant_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "sku": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "variant_id",
+          "sku",
+          "title"
+        ]
+      },
+      "InventoryItem": {
+        "type": "object",
+        "properties": {
+          "variant_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "availability_status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "out_of_stock",
+              "unavailable"
+            ]
+          },
+          "available_quantity": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "variant_id",
+          "store_id",
+          "availability_status",
+          "available_quantity",
+          "as_of"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "availability_status": {
+                  "const": "unavailable"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "available_quantity": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "availability_status": {
+                  "const": "out_of_stock"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "available_quantity": {
+                  "const": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "availability_status": {
+                  "const": "available"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "available_quantity": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        ]
+      },
+      "QuoteInputLine": {
+        "type": "object",
+        "properties": {
+          "variant_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "variant_id",
+          "quantity"
+        ],
+        "additionalProperties": false
+      },
+      "QuoteRequest": {
+        "type": "object",
+        "properties": {
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuoteInputLine"
+            },
+            "minItems": 1,
+            "maxItems": 50
+          },
+          "fulfillment_mode": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          }
+        },
+        "required": [
+          "store_id",
+          "items",
+          "fulfillment_mode"
+        ],
+        "additionalProperties": false
+      },
+      "QuoteLine": {
+        "type": "object",
+        "properties": {
+          "variant_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "unit_price": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "line_total": {
+            "$ref": "#/components/schemas/Money"
+          }
+        },
+        "required": [
+          "variant_id",
+          "quantity",
+          "unit_price",
+          "line_total"
+        ]
+      },
+      "Quote": {
+        "type": "object",
+        "properties": {
+          "quote_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "currency": {
+            "type": "string",
+            "const": "VND"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuoteLine"
+            },
+            "minItems": 1,
+            "maxItems": 50
+          },
+          "subtotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "shipping_fee": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "total": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "fulfillment_mode": {
+            "type": "string",
+            "enum": [
+              "pickup",
+              "delivery"
+            ]
+          },
+          "pricing_version": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "policy_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stock_reserved": {
+            "type": "boolean",
+            "const": false
+          }
+        },
+        "required": [
+          "quote_id",
+          "store_id",
+          "currency",
+          "items",
+          "subtotal",
+          "shipping_fee",
+          "total",
+          "fulfillment_mode",
+          "pricing_version",
+          "policy_version",
+          "expires_at",
+          "stock_reserved"
+        ]
+      },
+      "Pickup": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "pickup"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false
+      },
+      "Delivery": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "const": "delivery"
+          },
+          "recipient_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "phone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "address": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "mode",
+          "recipient_name",
+          "phone",
+          "address"
+        ],
+        "additionalProperties": false
+      },
+      "OrderRequest": {
+        "type": "object",
+        "properties": {
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "quote_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "external_order_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "payment_method": {
+            "type": "string",
+            "const": "cod"
+          },
+          "fulfillment": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Pickup"
+              },
+              {
+                "$ref": "#/components/schemas/Delivery"
+              }
+            ]
+          }
+        },
+        "required": [
+          "store_id",
+          "quote_id",
+          "external_order_id",
+          "payment_method",
+          "fulfillment"
+        ],
+        "additionalProperties": false
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "order_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "external_order_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "booking_status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "cancelled"
+            ]
+          },
+          "collection_status": {
+            "type": "string",
+            "enum": [
+              "unconfirmed",
+              "confirmed"
+            ],
+            "description": "Receipt-evidence status. A posted COD charge alone does not prove money was received."
+          },
+          "payment_method": {
+            "type": "string",
+            "const": "cod"
+          },
+          "currency": {
+            "type": "string",
+            "const": "VND"
+          },
+          "total": {
+            "$ref": "#/components/schemas/Money",
+            "description": "Current GET: canonical effective commercial total, including corrections/shipping changes; not cash received/refund disbursed. POST/replay: original booking snapshot."
+          },
+          "stock_deducted": {
+            "type": "boolean",
+            "const": true,
+            "description": "Historical fact at booking; remains true after cancellation/restock. Not current inventory."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "order_id",
+          "external_order_id",
+          "store_id",
+          "booking_status",
+          "collection_status",
+          "payment_method",
+          "currency",
+          "total",
+          "stock_deducted",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "Problem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 96,
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "request_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "detail",
+          "request_id",
+          "retryable"
+        ]
+      },
+      "MeResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Integration"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "QuoteResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Quote"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "OrderResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Order"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "ProductsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            },
+            "maxItems": 100
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "page",
+          "meta"
+        ]
+      },
+      "InventoryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryItem"
+            },
+            "maxItems": 100
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "page",
+          "meta"
+        ]
+      },
+      "CatalogSummary": {
+        "type": "object",
+        "properties": {
+          "store_id": {
+            "$ref": "#/components/schemas/Identifier"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "catalog_mode": {
+            "type": "string",
+            "enum": [
+              "explicit",
+              "merchant_published"
+            ],
+            "description": "Effective mode for this credential. OAuth clients always receive explicit mode."
+          },
+          "catalog_scope": {
+            "type": "string",
+            "const": "eligible_published_variants",
+            "description": "Only live variants of live published products eligible to this grant."
+          },
+          "inventory_complete": {
+            "type": "boolean",
+            "description": "False when one or more eligible variants have unsupported inventory or the safe integer quantity total is unavailable."
+          },
+          "quantity_basis": {
+            "type": "string",
+            "const": "per_variant"
+          },
+          "has_shared_inventory_items": {
+            "type": "boolean",
+            "description": "Eligible variants share an inventory item. Warn that the per-variant sum is not a count of independent physical units."
+          },
+          "product_count": {
+            "$ref": "#/components/schemas/NonNegativeSafeInteger"
+          },
+          "sku_count": {
+            "$ref": "#/components/schemas/NonNegativeSafeInteger"
+          },
+          "available_sku_count": {
+            "$ref": "#/components/schemas/NonNegativeSafeInteger"
+          },
+          "out_of_stock_sku_count": {
+            "$ref": "#/components/schemas/NonNegativeSafeInteger"
+          },
+          "unavailable_sku_count": {
+            "$ref": "#/components/schemas/NonNegativeSafeInteger"
+          },
+          "available_quantity_sum": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Sum of available quantity per eligible variant; it is not a deduplicated physical-inventory total."
+          }
+        },
+        "required": [
+          "store_id",
+          "as_of",
+          "catalog_mode",
+          "catalog_scope",
+          "inventory_complete",
+          "quantity_basis",
+          "has_shared_inventory_items",
+          "product_count",
+          "sku_count",
+          "available_sku_count",
+          "out_of_stock_sku_count",
+          "unavailable_sku_count",
+          "available_quantity_sum"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "inventory_complete": {
+                  "const": false
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "available_quantity_sum": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "inventory_complete": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "available_quantity_sum": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CatalogSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CatalogSummary"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ]
+      },
+      "OrdersResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            },
+            "maxItems": 100
+          },
+          "page": {
+            "$ref": "#/components/schemas/Page"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "page",
+          "meta"
+        ]
+      }
+    },
+    "parameters": {
+      "StoreId": {
+        "name": "store_id",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/Identifier"
+        },
+        "description": "Must belong to the authenticated integration grant; never defaults to another store."
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        }
+      },
+      "Cursor": {
+        "name": "cursor",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "description": "Signed opaque keyset cursor bound to integration/store/grant/filters; TTL 15 minutes."
+      },
+      "Correlation": {
+        "name": "X-Correlation-Id",
+        "in": "header",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 96,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "description": "Optional client reference only; server always generates a new X-Request-Id."
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._:-]+$"
+        },
+        "description": "Scoped by integration/store/API operation, stable across client rotation. Same key/body after timeout. Replay payload retained 30 days; dedup tombstone survives."
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Invalid input, missing idempotency key or invalid cursor",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "Invalid or expired access token",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          },
+          "WWW-Authenticate": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer challenge per token failure."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error403": {
+        "description": "Scope, integration or store access denied; includes merchant_capability_denied for quote/book.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Resource missing or outside ownership",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error409": {
+        "description": "Business or idempotency conflict; see stable problem code",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            },
+            "example": {
+              "type": "urn:snus:partner:error:insufficient_stock",
+              "title": "Insufficient stock",
+              "status": 409,
+              "code": "insufficient_stock",
+              "detail": "One or more quoted items are no longer available.",
+              "request_id": "req_example_3",
+              "retryable": false
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "Body exceeds 64 KiB",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error415": {
+        "description": "Content type must be application/json",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error422": {
+        "description": "Unsupported payment, shipping policy or inventory model",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Distributed quota exceeded",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          },
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds before retry; add client jitter."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error500": {
+        "description": "Unexpected error; reconcile uncertain booking outcome",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Error503": {
+        "description": "Dependency unavailable or bounded mutation wait exceeded; includes effective_order_unavailable when canonical read projection cannot be verified.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Unique server-generated identifier for this HTTP attempt.",
+            "schema": {
+              "$ref": "#/components/schemas/Identifier"
+            }
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            },
+            "description": "Sensitive scoped responses must not be cached by shared intermediaries."
+          },
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds before retry; add client jitter."
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,237 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Stash Dash — public customer Scan & Go design system.
+
+   Deliberately distinct from the Snus Ops admin palette. The shelf tag
+   is black / white / tangerine with oversized strength + price; this app
+   is that tag unfurling into a tactile cart builder. Warm paper base,
+   ink type, one high-energy tangerine accent, a restrained frost cue for
+   "cooling" / success only. No purple/blue blobs, no beige monotony.
+
+   Colors are RGB-channel tokens so Tailwind opacity modifiers
+   (bg-ink/50, text-paper/85) work everywhere.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Surfaces */
+  --paper-rgb: 246 241 231;
+  --paper-band-rgb: 239 231 214;
+  --paper-deep-rgb: 230 218 196;
+  --card-rgb: 255 255 255;
+
+  /* Ink */
+  --ink-rgb: 22 18 16;
+  --ink-soft-rgb: 58 51 45;
+  --ink-muted-rgb: 124 114 104;
+
+  /* Accent — tangerine (echoes the shelf-tag price band) */
+  --dash-rgb: 255 74 28;
+  --dash-deep-rgb: 216 54 10;
+  --dash-ink-rgb: 194 41 5; /* text-bearing accent: white on this passes WCAG AA */
+  --dash-tint-rgb: 255 227 216;
+
+  /* Frost — cool micro-accent for cooling cues + success only */
+  --frost-rgb: 15 181 174;
+  --frost-tint-rgb: 214 244 242;
+
+  /* Signals */
+  --ember-rgb: 217 52 43;
+  --hairline-rgb: 228 219 203;
+
+  /* Utility */
+  --ink-scrim: rgba(22, 18, 16, 0.5);
+
+  /* Radius system (one consistent scale) */
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 20px;
+  --r-lg: 28px;
+
+  /* Elevation */
+  --shadow-lift: 0 1px 2px rgba(22, 18, 16, 0.04), 0 10px 26px -14px rgba(22, 18, 16, 0.22);
+  --shadow-pop: 0 14px 34px -12px rgba(194, 41, 5, 0.45);
+  --shadow-qr: 0 2px 6px rgba(22, 18, 16, 0.06), 0 22px 46px -18px rgba(22, 18, 16, 0.26);
+
+  /* Motion */
+  --ease-tactile: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: rgb(var(--paper-rgb));
+    color: rgb(var(--ink-rgb));
+    font-family: "Inter", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-feature-settings: "cv01", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  button {
+    font-family: inherit;
+  }
+
+  :focus-visible {
+    outline: 3px solid rgb(var(--dash-rgb));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* ── Stage: mobile-first, centered shelf on larger screens ── */
+  .sd-stage {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 440px;
+    margin-inline: auto;
+    position: relative;
+  }
+
+  .sd-pad {
+    padding-inline: clamp(16px, 5vw, 22px);
+  }
+
+  /* ── Sticky bottom action bar, thumb-zone, safe-area aware ── */
+  .sd-cta-bar {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-top: auto;
+    background: linear-gradient(180deg, rgba(246, 241, 231, 0) 0%, rgb(var(--paper-rgb)) 26%);
+    padding-block: 12px;
+    padding-block-end: calc(14px + env(safe-area-inset-bottom));
+    padding-inline: clamp(16px, 5vw, 22px);
+    z-index: 30;
+  }
+
+  .sd-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    padding-block: 10px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+    background: linear-gradient(180deg, rgb(var(--paper-rgb)) 60%, rgba(246, 241, 231, 0));
+  }
+
+  /* ── Product tin (typographic placeholder with stable size) ── */
+  .sd-tin {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: rgb(var(--ink-rgb));
+    isolation: isolate;
+    box-shadow: var(--shadow-lift);
+  }
+  .sd-tin::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgb(var(--dash-rgb)) 0 46%, rgb(var(--ink-rgb)) 46.2% 100%);
+    z-index: 0;
+  }
+  .sd-tin::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 80% at 85% 12%, rgba(255, 255, 255, 0.22), transparent 55%);
+    z-index: 1;
+  }
+
+  /* ── Final QR tile: pure white, generous quiet zone, scan-safe ── */
+  .qr-tile {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-qr);
+    line-height: 0;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}
+
+@layer utilities {
+  .sd-rise {
+    animation: sd-rise 0.5s var(--ease-tactile) both;
+  }
+  .sd-pop {
+    animation: sd-pop 0.34s var(--ease-settle) both;
+  }
+  .sd-bump {
+    animation: sd-bump 0.42s var(--ease-tactile);
+  }
+  .sd-frost {
+    animation: sd-frost 0.6s var(--ease-settle) both;
+  }
+  .sd-assemble {
+    animation: sd-assemble 0.5s var(--ease-settle) both;
+  }
+  /* The add-to-cart "fly to stash" chip */
+  .sd-fly {
+    animation: sd-fly 0.62s var(--ease-tactile) forwards;
+  }
+  .sd-no-bounce {
+    overscroll-behavior: contain;
+  }
+}
+
+/* ── Keyframes: transform / opacity only ── */
+@keyframes sd-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sd-pop {
+  0% { opacity: 0; transform: scale(0.92); }
+  60% { opacity: 1; transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+@keyframes sd-bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}
+@keyframes sd-frost {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes sd-assemble {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes sd-fly {
+  0% { opacity: 0.9; transform: translate(0, 0) scale(0.7); }
+  35% { opacity: 1; transform: translate(0, -10px) scale(1); }
+  100% { opacity: 0; transform: translate(var(--fly-x, 40px), var(--fly-y, -120px)) scale(0.28); }
+}
+
+/* ── Reduced motion: keep state feedback, drop movement ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .sd-fly { opacity: 0; }
+}

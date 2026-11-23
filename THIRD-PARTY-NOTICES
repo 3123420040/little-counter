@@ -1,0 +1,20 @@
+The MIT license in LICENSE applies to the original source contributed to this
+project. Dependencies, base images and tools retain their respective licenses.
+Package manifests and lockfiles identify the components used to build the
+software. Consult the license texts and notices shipped with the versions you
+actually distribute, including in browser bundles and container images.
+
+Earlier releases of this project's source carry the following MIT attribution.
+
+Copyright (c) 2026 medusa-snus contributors
+
+Medusa 2.19.0
+
+MedusaJS licenses the community portions under MIT. Its Enterprise Edition
+license identifies specific RBAC and SSO materials, including compiled forms,
+whose use or distribution requires a separate agreement with MedusaJS.
+The lockfile references packages that contain such materials. The rights for
+these components are governed by the following upstream terms.
+
+https://github.com/medusajs/medusa/blob/v2.19.0/LICENSE
+https://github.com/medusajs/medusa/blob/v2.19.0/ENTERPRISE-LICENSE.md

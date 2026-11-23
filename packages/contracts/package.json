@@ -1,0 +1,36 @@
+{
+  "name": "@medusa-snus/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./authorization-policy": "./src/authorization-policy.ts",
+    "./outbox-runtime": "./src/outbox-runtime.ts",
+    "./runtime-capabilities": "./src/runtime-capabilities.ts",
+    "./partner-api": "./src/partner-api/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "authorization-policy": [
+        "src/authorization-policy.ts"
+      ],
+      "outbox-runtime": [
+        "src/outbox-runtime.ts"
+      ],
+      "runtime-capabilities": [
+        "src/runtime-capabilities.ts"
+      ],
+      "partner-api": [
+        "src/partner-api/index.ts"
+      ]
+    }
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "zod": "^4.1.13"
+  }
+}

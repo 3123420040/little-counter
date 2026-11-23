@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS",
+      "moduleResolution": "Node"
+    },
+    "moduleTypes": {
+      "medusa-config.ts": "cjs",
+      "plugins/**/*.ts": "cjs"
+    }
+  },
+  "include": ["medusa-config.ts", "src/**/*.ts", "plugins/**/*.ts"]
+}

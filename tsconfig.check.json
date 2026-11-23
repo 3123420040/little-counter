@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true
+  },
+  "include": [
+    "packages/**/*.ts",
+    "packages/**/*.tsx",
+    "plugins/**/*.ts",
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "apps/ai/**/*.ts",
+    "apps/telegram/**/*.ts",
+    "apps/pos/src/api/**/*.ts",
+    "apps/pos/src/hooks/**/*.ts",
+    "apps/customer/src/**/*.ts",
+    "apps/customer/src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".medusa",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

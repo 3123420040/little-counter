@@ -1,0 +1,485 @@
+{
+  "orders": [
+    {
+      "orderId": "A1",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_A",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 300000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "cash",
+          "amountMinor": 300000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 3,
+      "soldQuantityContribution": 3
+    },
+    {
+      "orderId": "A2",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_A",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 100000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "manual_bank",
+          "amountMinor": 200000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        },
+        {
+          "kind": "refund",
+          "method": "manual_bank",
+          "amountMinor": 100000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "originalQuantity": 2,
+      "correctedAndRefundedBy": "uat_staff_B",
+      "effectiveRevisionQuantity": 1,
+      "soldQuantityContribution": 1
+    },
+    {
+      "orderId": "A3",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_A",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "cancelled",
+      "sourceStatus": "canceled",
+      "currentOrderGrossValueMinor": 0,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "cash",
+          "amountMinor": 400000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 400000,
+      "originalQuantity": 4,
+      "cancelledBy": "uat_manager",
+      "effectiveRevisionQuantity": 4,
+      "soldQuantityContribution": 0,
+      "effectiveCommercialTotalMinor": 400000
+    },
+    {
+      "orderId": "B1",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_B",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 200000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "cash",
+          "amountMinor": 80000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        },
+        {
+          "kind": "charge",
+          "method": "manual_bank",
+          "amountMinor": 120000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 2,
+      "soldQuantityContribution": 2
+    },
+    {
+      "orderId": "B2",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_B",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "pending",
+      "currentOrderGrossValueMinor": 100000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [],
+      "plannedPaymentMethod": "manual_bank",
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 1,
+      "soldQuantityContribution": 1
+    },
+    {
+      "orderId": "C1",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_former_C",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 100000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "manual_bank",
+          "amountMinor": 100000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 1,
+      "soldQuantityContribution": 1
+    },
+    {
+      "orderId": "P1",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_A",
+      "creatorKind": "partner",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 100000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "manual_bank",
+          "amountMinor": 100000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 1,
+      "soldQuantityContribution": 1
+    },
+    {
+      "orderId": "U1",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": null,
+      "creatorKind": "unknown",
+      "trustedCreationEventCount": 0,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 200000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "cash",
+          "amountMinor": 200000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 2,
+      "soldQuantityContribution": 2
+    },
+    {
+      "orderId": "B_OLD",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_1",
+      "createdAt": "2026-10-17T10:00:00+07:00",
+      "creatorOperatorId": "uat_staff_B",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 500000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "cash",
+          "amountMinor": 500000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 5,
+      "soldQuantityContribution": 5
+    },
+    {
+      "orderId": "A_STORE_2",
+      "merchantId": "uat_merchant_1",
+      "storeId": "uat_store_2",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_A",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 900000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "cash",
+          "amountMinor": 900000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 9,
+      "soldQuantityContribution": 9
+    },
+    {
+      "orderId": "A_OTHER_MERCHANT",
+      "merchantId": "uat_merchant_2",
+      "storeId": "uat_store_3",
+      "createdAt": "2026-10-18T09:00:00+07:00",
+      "creatorOperatorId": "uat_staff_A",
+      "creatorKind": "staff",
+      "trustedCreationEventCount": 1,
+      "currentCommercialState": "active",
+      "sourceStatus": "completed",
+      "currentOrderGrossValueMinor": 700000,
+      "currencyCode": "VND",
+      "minorUnitExponent": 0,
+      "paymentEvents": [
+        {
+          "kind": "charge",
+          "method": "manual_bank",
+          "amountMinor": 700000,
+          "status": "posted",
+          "sourceOccurredAt": "2026-10-18T12:00:00+07:00",
+          "recordedAt": "2026-10-18T12:00:01+07:00"
+        }
+      ],
+      "plannedPaymentMethod": null,
+      "refundPayableAsOfMinor": 0,
+      "effectiveRevisionQuantity": 7,
+      "soldQuantityContribution": 7
+    }
+  ],
+  "expected": {
+    "all": {
+      "cohortOrderIds": [
+        "A1",
+        "A2",
+        "A3",
+        "B1",
+        "B2",
+        "C1",
+        "P1",
+        "U1"
+      ],
+      "orderListCount": 8,
+      "soldItemQuantity": 11,
+      "currentOrderGrossValueMinor": 1100000,
+      "dashboardPaymentMixVnd": {
+        "cash": {
+          "postedChargeOrderCount": 5,
+          "grossMinor": 1480000,
+          "negativeMinor": 0,
+          "netMinor": 1480000
+        },
+        "manual_bank": {
+          "postedChargeOrderCount": 4,
+          "grossMinor": 520000,
+          "negativeMinor": 100000,
+          "netMinor": 420000
+        },
+        "cod": {
+          "postedChargeOrderCount": 0,
+          "grossMinor": 0,
+          "negativeMinor": 0,
+          "netMinor": 0
+        }
+      },
+      "refundPayableAsOfMinor": 400000
+    },
+    "A": {
+      "cohortOrderIds": [
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "orderListCount": 3,
+      "soldItemQuantity": 4,
+      "currentOrderGrossValueMinor": 400000,
+      "dashboardPaymentMixVnd": {
+        "cash": {
+          "postedChargeOrderCount": 2,
+          "grossMinor": 700000,
+          "negativeMinor": 0,
+          "netMinor": 700000
+        },
+        "manual_bank": {
+          "postedChargeOrderCount": 1,
+          "grossMinor": 200000,
+          "negativeMinor": 100000,
+          "netMinor": 100000
+        },
+        "cod": {
+          "postedChargeOrderCount": 0,
+          "grossMinor": 0,
+          "negativeMinor": 0,
+          "netMinor": 0
+        }
+      },
+      "refundPayableAsOfMinor": 400000
+    },
+    "B": {
+      "cohortOrderIds": [
+        "B1",
+        "B2"
+      ],
+      "orderListCount": 2,
+      "soldItemQuantity": 3,
+      "currentOrderGrossValueMinor": 300000,
+      "dashboardPaymentMixVnd": {
+        "cash": {
+          "postedChargeOrderCount": 2,
+          "grossMinor": 580000,
+          "negativeMinor": 0,
+          "netMinor": 580000
+        },
+        "manual_bank": {
+          "postedChargeOrderCount": 1,
+          "grossMinor": 120000,
+          "negativeMinor": 0,
+          "netMinor": 120000
+        },
+        "cod": {
+          "postedChargeOrderCount": 0,
+          "grossMinor": 0,
+          "negativeMinor": 0,
+          "netMinor": 0
+        }
+      },
+      "refundPayableAsOfMinor": 0
+    },
+    "A_B": {
+      "cohortOrderIds": [
+        "A1",
+        "A2",
+        "A3",
+        "B1",
+        "B2"
+      ],
+      "orderListCount": 5,
+      "soldItemQuantity": 7,
+      "currentOrderGrossValueMinor": 700000,
+      "dashboardPaymentMixVnd": {
+        "cash": {
+          "postedChargeOrderCount": 4,
+          "grossMinor": 1280000,
+          "negativeMinor": 0,
+          "netMinor": 1280000
+        },
+        "manual_bank": {
+          "postedChargeOrderCount": 2,
+          "grossMinor": 320000,
+          "negativeMinor": 100000,
+          "netMinor": 220000
+        },
+        "cod": {
+          "postedChargeOrderCount": 0,
+          "grossMinor": 0,
+          "negativeMinor": 0,
+          "netMinor": 0
+        }
+      },
+      "refundPayableAsOfMinor": 400000
+    },
+    "C": {
+      "cohortOrderIds": [
+        "C1"
+      ],
+      "orderListCount": 1,
+      "soldItemQuantity": 1,
+      "currentOrderGrossValueMinor": 100000,
+      "dashboardPaymentMixVnd": {
+        "cash": {
+          "postedChargeOrderCount": 0,
+          "grossMinor": 0,
+          "negativeMinor": 0,
+          "netMinor": 0
+        },
+        "manual_bank": {
+          "postedChargeOrderCount": 1,
+          "grossMinor": 100000,
+          "negativeMinor": 0,
+          "netMinor": 100000
+        },
+        "cod": {
+          "postedChargeOrderCount": 0,
+          "grossMinor": 0,
+          "negativeMinor": 0,
+          "netMinor": 0
+        }
+      },
+      "refundPayableAsOfMinor": 0
+    }
+  }
+}

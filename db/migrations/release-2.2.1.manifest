@@ -1,0 +1,3 @@
+# snus-custom-migration-manifest/v1
+# Staff own cancellation, approved merchant operations release
+1|061_staff_cancel_own_permission.sql|3c92552e87662541964ff138024e4918a1f37c7b98a018fbfa2836186b1a7996|required
